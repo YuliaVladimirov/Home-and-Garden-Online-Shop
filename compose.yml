@@ -1,0 +1,22 @@
+name: "shop"
+services:
+  shop-db:
+    image: mysql
+    ports:
+      - "33306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "p455W0Rd"
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p'p455W0Rd'"]
+      timeout: 20s
+      retries: 10
+
+  shop-app:
+    image: yuliavladimirov/hoga-shop
+    restart: on-failure
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      shop-db:
+        condition: service_healthy
